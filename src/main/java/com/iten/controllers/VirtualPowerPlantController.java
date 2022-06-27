@@ -1,12 +1,72 @@
 package com.iten.controllers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iten.mapper.BatteryMapper;
+import com.iten.model.Battery;
+import com.iten.model.BatteryStatistics;
+import com.iten.model.BatteryWrapper;
+import com.iten.services.VirtualPowerPlantService;
+
 @RestController
-@RequestMapping (value = "/batteries")
+@RequestMapping (value = "batteries")
 public class VirtualPowerPlantController {
 
-	//private VirtualPowerPlantService service;
+	@Autowired
+	private VirtualPowerPlantService service;
+	
+	@GetMapping (value = "/statistics")
+	public @ResponseBody BatteryStatistics getFilteredBatteriesStatistics(
+			@RequestParam int fromPostCode,
+			@RequestParam int toPostCode) {
+		
+		List<Battery> filteredBatteries = service.filteredBatteries(fromPostCode, toPostCode);
+		BatteryStatistics statistics = new BatteryStatistics();
+		
+		if (!filteredBatteries.isEmpty()) {
+
+			final List<BatteryWrapper> batteries = filteredBatteries.stream()
+					.map(BatteryMapper::toBatteryWrapper)
+					.collect(Collectors.toList());
+			double averageWattCapacity = service.averageWattCapacity(filteredBatteries);
+			double totalWattCapacity = service.totalWattCapacity(filteredBatteries);
+			
+			statistics.setBatteries(batteries);
+			statistics.setAverageWattCapacity(averageWattCapacity);
+			statistics.setTotalWattCapacity(totalWattCapacity);
+			return statistics;
+		} else {
+			return statistics;
+		}
+	}
+	
+	@PostMapping (value = "/saveBatteries")
+	public ResponseEntity<List<BatteryWrapper>> saveBatteries(@Valid @RequestBody List<BatteryWrapper> batteries) {
+		
+		final List<Battery> battList = batteries.stream()
+				.map(BatteryMapper::toBattery)
+				.collect(Collectors.toList());
+		
+		final List<BatteryWrapper> battListWrapper = service.saveBatteries(battList).stream()
+				.map(BatteryMapper::toBatteryWrapper)
+				.collect(Collectors.toList());
+		
+		return new ResponseEntity<>(battListWrapper, HttpStatus.CREATED);
+		
+	}
 	
 }

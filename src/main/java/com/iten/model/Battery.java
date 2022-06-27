@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table (name = "batteries")
+@Table (name = "battery")
 public class Battery {
 
 	@Id
@@ -27,7 +27,7 @@ public class Battery {
 	@Column (name = "name")
 	private String batteryName;
 	
-	@Column (name = "postcode")
+	@Column (name = "post_code")
 	private Integer postCode;
 	
 	@Column (name = "capacity_watts")

@@ -14,26 +14,34 @@ public class VirtualPowerPlantService {
 	@Autowired
 	private VirtualPowerPlantRepository repository;
 	
-	public void saveBatteries(List<Battery> batteries) {
-		repository.saveAll(batteries);
+	public List<Battery> saveBatteries(List<Battery> batteries) {
+		if (!batteries.isEmpty()) {
+			try {
+				return repository.saveAll(batteries);
+			} catch (NullPointerException e) {
+				throw new NullPointerException("Attempted to save invalid data.");
+			}
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 	
 	public List<Battery> filteredBatteries(Integer fromPostCode, Integer toPostCode) {
-		final List<Battery> filteredBatteries = repository.findBatteriesByPostcode(fromPostCode, toPostCode);
+		final List<Battery> filteredBatteries = repository.findByPostCodeBetweenOrderByBatteryNameAsc(fromPostCode, toPostCode);
 		
 		return filteredBatteries;
 	}
 	
 	public double averageWattCapacity(List<Battery> batteries) {
 		return batteries.stream()
-				.mapToDouble(b -> b.getWattCapacity())
+				.mapToDouble(Battery::getWattCapacity)
 				.average().getAsDouble();
 	}
 	
 	public double totalWattCapacity(List<Battery> batteries) {
 		return batteries.stream()
-				.mapToDouble(b -> b.getWattCapacity())
+				.mapToDouble(Battery::getWattCapacity)
 				.sum();
 	}
-	
+
 }

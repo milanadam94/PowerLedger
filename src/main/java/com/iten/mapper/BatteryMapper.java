@@ -5,10 +5,13 @@ import org.springframework.stereotype.Component;
 import com.iten.model.Battery;
 import com.iten.model.BatteryWrapper;
 
+import lombok.NoArgsConstructor;
+
 @Component
+@NoArgsConstructor
 public class BatteryMapper {
 
-	public Battery toBattery(BatteryWrapper battery) {
+	public static Battery toBattery(BatteryWrapper battery) {
 		return Battery.builder()
 				.batteryName(battery.getBatteryName())
 				.postCode(battery.getPostCode())
@@ -16,7 +19,7 @@ public class BatteryMapper {
 				.build();
 	}
 	
-	public BatteryWrapper toBatteryWrapper(Battery battery) {
+	public static BatteryWrapper toBatteryWrapper(Battery battery) {
 		return BatteryWrapper.builder()
 				.batteryName(battery.getBatteryName())
 				.postCode(battery.getPostCode())
