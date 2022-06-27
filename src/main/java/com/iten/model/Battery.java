@@ -5,20 +5,31 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table (name = "batteries")
 public class Battery {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer Oid;
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	private Integer oid;
 	
-	@Column
+	@Column (name = "name")
 	private String batteryName;
 	
-	@Column
+	@Column (name = "postcode")
 	private Integer postCode;
 	
-	@Column
-	private Integer wattCapacity;
+	@Column (name = "capacity_watts")
+	private Double wattCapacity;
 }
