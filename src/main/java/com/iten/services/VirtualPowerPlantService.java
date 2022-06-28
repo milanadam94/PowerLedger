@@ -2,6 +2,8 @@ package com.iten.services;
 
 import java.util.List;
 
+import javax.persistence.PersistenceException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,8 @@ public class VirtualPowerPlantService {
 		if (!batteries.isEmpty()) {
 			try {
 				return repository.saveAll(batteries);
-			} catch (NullPointerException e) {
-				throw new NullPointerException("Attempted to save invalid data.");
+			} catch (PersistenceException e) {
+				throw new PersistenceException("Attempted to save invalid data.");
 			}
 		} else {
 			throw new IllegalStateException();

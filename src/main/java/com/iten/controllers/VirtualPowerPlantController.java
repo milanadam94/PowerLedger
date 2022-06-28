@@ -36,22 +36,14 @@ public class VirtualPowerPlantController {
 		
 		List<Battery> filteredBatteries = service.filteredBatteries(fromPostCode, toPostCode);
 		BatteryStatistics statistics = new BatteryStatistics();
-		
-		if (!filteredBatteries.isEmpty()) {
 
-			final List<BatteryWrapper> batteries = filteredBatteries.stream()
-					.map(BatteryMapper::toBatteryWrapper)
-					.collect(Collectors.toList());
-			double averageWattCapacity = service.averageWattCapacity(filteredBatteries);
-			double totalWattCapacity = service.totalWattCapacity(filteredBatteries);
-			
-			statistics.setBatteries(batteries);
-			statistics.setAverageWattCapacity(averageWattCapacity);
-			statistics.setTotalWattCapacity(totalWattCapacity);
-			return statistics;
-		} else {
-			return statistics;
-		}
+		statistics.setBatteries(filteredBatteries.stream()
+				.map(BatteryMapper::toBatteryWrapper)
+				.collect(Collectors.toList()));
+		statistics.setAverageWattCapacity(service.averageWattCapacity(filteredBatteries));
+		statistics.setTotalWattCapacity(service.totalWattCapacity(filteredBatteries));
+		
+		return statistics;
 	}
 	
 	@PostMapping (value = "/saveBatteries")
